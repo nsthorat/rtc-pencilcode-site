@@ -20,6 +20,14 @@ document.write(
   pencilcode.domain + '/editor.css">' +
   '<link rel="stylesheet" type="text/css" href="//' +
   pencilcode.domain + '/lib/tooltipster/css/tooltipster.css">');
+
+// TogetherJS config.
+TogetherJSConfig_getUserName = function () {return pencilcode.owner;};
+TogetherJSConfig_suppressInvite = true;
+</script>
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
+<script>
+TogetherJS();
 </script>
 </head>
 <body id="pencilcode">
