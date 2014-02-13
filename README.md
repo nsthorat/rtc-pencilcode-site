@@ -4,8 +4,8 @@ How To Build and Test PencilCode
 First install the prerequisites: git, nodejs, and grunt.  Then:
 
 <pre>
-git clone https://github.com/PencilCode/pencilcode-site.git
-cd pencilcode-site
+git clone https://github.com/nsthorat/rtc-pencilcode-site.git
+cd rtc-pencilcode-site
 npm install
 grunt
 </pre>
