@@ -22,7 +22,16 @@ document.write(
   pencilcode.domain + '/lib/tooltipster/css/tooltipster.css">');
 
 // TogetherJS config.
-TogetherJSConfig_getUserName = function () {return pencilcode.owner;};
+TogetherJSConfig_getUserName = function () {
+	var animals = [
+		"Emu", "Fox", "Llama", "Bat",
+		"Cat", "Dog", "Ox", "Zebra",
+		"Antelope", "Rabbit", "Hare",
+		"Otter", "Ocelot", "Vole",
+		"Mole", "Hawk", "Banana"
+	];
+	return "J. Random " + animals[Math.floor(Math.random() * animals.length)];
+};
 TogetherJSConfig_suppressInvite = true;
 TogetherJSConfig_autoStart = true;
 </script>
