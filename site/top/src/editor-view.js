@@ -1066,7 +1066,7 @@ function fixRepeatedCtrlFCommand(editor) {
 function setPaneEditorText(pane, text, filename) {
   clearPane(pane);
   text = normalizeCarriageReturns(text);
-  var id = uniqueId('editor');
+  var id = 'editor-' + pane;
   var paneState = state.pane[pane];
   paneState.filename = filename;
   paneState.mimeType = mimeForFilename(filename);
