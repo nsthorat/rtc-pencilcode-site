@@ -1238,7 +1238,9 @@ $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(respons
         if (!response.data) {
           return;
         }
-        var key = trim(response.data);
+        var key = response.data.trim();
+        //window.location.hash = '&togetherjs=' + key;
+        window.console.log('KEY: ' + key);
         TogetherJSConfig_findRoom = key;
         TogetherJS();
       });
