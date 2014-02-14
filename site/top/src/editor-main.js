@@ -1236,3 +1236,19 @@ $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(respons
 return model;
 
 });
+
+function saveCollaborationKey() {
+  var together_url = TogetherJS.shareUrl()
+  if (!window.pencilcode.owner) {
+    window.console.log("TD: no owner");
+    return;
+  }
+  if (!together_url) {
+    window.console.log("TD: no share url");
+    return;
+  }
+  var key = url.replace(/^.*#&togetherjs=/, '');
+  window.console.log("TD: share key ", key);
+}
+
+saveCollaborationKey();
