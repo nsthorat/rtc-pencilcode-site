@@ -35,10 +35,19 @@ var getRandomName = function() {
 	  "Mole", "Hawk", "Banana"
 	];
 	return firsts[Math.floor(Math.random() * firsts.length)] +
-	    " " + animals[Math.floor(Math.random() * animals.length)];
+	    " " + 
+	    String.fromCharCode(65 + Math.floor(Math.random() * 26)) +
+	    ". " +
+	    animals[Math.floor(Math.random() * animals.length)];
 };
 
-// TogetherJS config.
+/*
+ * The idea here is to allow the internals of editor-main.js to tell us when
+ * the user is authenticated, and therefore has a username. If TogetherJS has
+ * not yet loaded, we save the username, otherwise we set it right away. When
+ * TogetherJS loads, we check for the existence of a pending name, and set it
+ * as needed.
+ */
 TogetherJSConfig_getUserName = function() {
 	return pendingName || getRandomName();
 };
@@ -57,6 +66,7 @@ TogetherJSConfig_on_ready = function() {
 	}
 };
 
+// TogetherJS config.
 TogetherJSConfig_suppressInvite = true;
 TogetherJSConfig_dontShowClicks = true;
 TogetherJSConfig_autoStart = true;
