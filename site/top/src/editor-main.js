@@ -87,6 +87,10 @@ function specialowner() {
           model.ownername === 'event');
 }
 
+function isowner() {
+  return loggedInUser == model.ownername;
+}
+
 function updateTopControls(addHistory) {
   var m = modelatpos('left');
   // Update visible URL and main title name.
@@ -109,7 +113,7 @@ function updateTopControls(addHistory) {
     applyIfCollaborator(updateCollaborateButtonVisibility);
     if (m.data && m.data.file) {
       buttons.push(
-        {id: 'save', title: 'Ctrl+S', label: 'Save',
+        {id: 'save', title: 'Ctrl+S', label: isowner() ? 'Save' : 'Save a Copy',
          disabled: !specialowner() && model.username &&
                    !view.isPaneEditorDirty(paneatpos('left')) });
     }
@@ -599,12 +603,12 @@ function signUpAndSave() {
             view.notePaneEditorCleanText(paneatpos('left'), runtext);
             storage.deleteBackup(mp.filename);
             state.update({cancel: true});
-            window.location.href =
-                'http://' + username + '.' + window.pencilcode.domain +
-                '/edit/' + mp.filename +
-                '#login=' + username + ':' + (key ? key : '');
           }
         });
+        window.open(
+          'http://' + username + '.' + window.pencilcode.domain +
+          '/edit/' + mp.filename +
+          '#login=' + username + ':' + (key ? key : ''));
       }
       if (key && shouldCreateAccount) {
         storage.setPassKey(username, key, null, function(m) {
@@ -1293,7 +1297,7 @@ function cookie(key, value, options) {
 
 readNewUrl();
 
-var loggedInUser = cookie('login').split(":")[0];
+var loggedInUser = cookie('login') ? cookie('login').split(":")[0] : null;
 
 // TODO: Don't do this in javascript.
 applyIfCollaborator(function(isCollaborator) {
