@@ -169,7 +169,9 @@ function applyIfCollaborator(callback) {
         }
       }
     }
-    callback(isCollaborator);
+    if (isCollaborator) {
+      callback(isCollaborator);
+    }
   });
 }
 
@@ -1315,15 +1317,11 @@ function saveCollaborationKey() {
     return;
   }
   var together_url = TogetherJS.shareUrl();
-  window.console.log(together_url);
   if (!together_url) {
     window.console.log("Error: no share url for collaboration");
     return;
   }
   var key = together_url.replace(/^.*#&togetherjs=/, '');
-  window.console.log("saving: " + model.ownername);
-  window.console.log( pencilcode.programName + ".collaborators.key");
-  window.console.log("key: " + key);
   var key_filename = pencilcode.programName + ".collaborators.key";
   var data = {
     auth: true,
