@@ -1233,7 +1233,15 @@ $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(respons
   var isCollaborator = false;
   for (var i = 0; i < collaborators.length; i++) {
     if (collaborators[i] == loggedInUser) {
-      TogetherJS();
+      // Now grab the TogetherJS identifier.
+      $.getJSON('/load/' + pencilcode.programName + '.collaborators.key', function(response) {
+        if (!response.data) {
+          return;
+        }
+        var key = trim(response.data);
+        TogetherJSConfig_findRoom = key;
+        TogetherJS();
+      });
     }
   }
 });
