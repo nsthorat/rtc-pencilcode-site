@@ -197,7 +197,7 @@ view.on('collaborate', function() {
   var collab_filename = modelatpos('left').filename + ".collaborators";
   var collabdata = {
     auth: true,
-    data: model.ownername,
+    data: model.ownername + '\n',
     file: collab_filename,
     mime: "text/plain",
     mtime: 0
