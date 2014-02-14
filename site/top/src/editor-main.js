@@ -100,6 +100,13 @@ function updateTopControls(addHistory) {
   if (!model.editmode) {
     buttons.push({id: 'editmode', label: 'Edit'});
   } else {
+    buttons.push(
+        {id: 'add-collaborate', label: 'Add Collaborators'});
+    buttons.push(
+        {id: 'stop-collaborate', label: 'Stop Collaborating'});
+    buttons.push(
+        {id: 'collaborate', label: 'Collaborate'});
+    applyIfCollaborator(updateCollaborateButtonVisibility);
     if (m.data && m.data.file) {
       buttons.push(
         {id: 'save', title: 'Ctrl+S', label: 'Save',
@@ -151,6 +158,40 @@ function updateTopControls(addHistory) {
   view.setPaneEditorReadOnly(paneatpos('back'), true);
 }
 
+function applyIfCollaborator(callback) {
+  $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
+    var isCollaborator = false;
+    if (response.data) {
+      var collaborators = response.data.split("\n");
+      for (var i = 0; i < collaborators.length; i++) {
+        if (collaborators[i] == model.ownername) {
+          isCollaborator = true;
+        }
+      }
+    }
+    callback(isCollaborator);
+  });
+}
+
+function getCollaboratorKey(callback) {
+  $.getJSON('/load/' + pencilcode.programName + '.collaborators.key', function(response) {
+    if (!response.data) {
+      return;
+    }
+    var key = response.data.trim();
+    callback(key);
+  });
+}
+
+function updateCollaborateButtonVisibility(isCollaborator) {
+  // Only show collaborate buttons for the owner of the file.
+  if (loggedInUser == model.ownername) {
+    $("#collaborate").css("display", isCollaborator ? "none" : "inline-block");
+    $("#add-collaborate").css("display", !isCollaborator ? "none" : "inline-block");
+    $("#stop-collaborate").css("display", !isCollaborator ? "none" : "inline-block");
+  }
+}
+
 view.on('help', function() {
   view.flashNotification('<a href="http://' +
      window.pencilcode.domain + '/group" target="_blank">Ask a question.</a>' +
@@ -159,6 +200,45 @@ view.on('help', function() {
     (model.username ?
         '&emsp; <a id="setpass" href="#setpass">Change password.</a>' : '')
   );
+});
+
+view.on('collaborate', function() {
+  // Add owner's name to the collaborate file.
+  var collab_filename = modelatpos('left').filename + ".collaborators";
+  var collabdata = {
+    auth: true,
+    data: model.ownername,
+    file: collab_filename,
+    mime: "text/plain",
+    mtime: 0
+  };
+
+  storage.saveFile(
+      model.ownername, collab_filename, collabdata, true, model.passkey, false /* callback */);
+  // Automatically update buttons instead of waiting for response from collaborators file.
+  updateCollaborateButtonVisibility(true);
+});
+
+view.on('add-collaborate', function() {
+  window.open(modelatpos('left').filename + '.collaborators');
+});
+
+view.on('stop-collaborate', function() {
+  // Remove the contents of the collaborate file.
+  var collab_filename = modelatpos('left').filename + ".collaborators";
+  var collabdata = {
+    auth: true,
+    data: "",
+    file: collab_filename,
+    mime: "text/plain",
+    mtime: 0
+  };
+
+  storage.saveFile(
+      model.ownername, collab_filename, collabdata, true, model.passkey, false /* callback */);
+  // Automatically update buttons instead of waiting for response from collaborators file.
+  updateCollaborateButtonVisibility(false);
+
 });
 
 view.on('tour', function() {
@@ -352,6 +432,7 @@ function saveAction(forceOverwrite) {
   // TODO: pick the right mime type here.
   var newdata = $.extend({},
       modelatpos('left').data, { data: runtext, mime: mimetext.mime });
+  window.console.log(newdata);
   // After a successful save, mark the file as clean and update mtime.
   function noteclean(mtime) {
     view.flashNotification('Saved.');
@@ -1225,26 +1306,12 @@ readNewUrl();
 var loggedInUser = cookie('login').split(":")[0];
 
 // TODO: Don't do this in javascript.
-$.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
-  if (!response.data) {
-    return;
-  }
-  var collaborators = response.data.split("\n");
-  var isCollaborator = false;
-  for (var i = 0; i < collaborators.length; i++) {
-    if (collaborators[i] == loggedInUser) {
-      // Now grab the TogetherJS identifier.
-      $.getJSON('/load/' + pencilcode.programName + '.collaborators.key', function(response) {
-        if (!response.data) {
-          return;
-        }
-        var key = response.data.trim();
-        //window.location.hash = '&togetherjs=' + key;
-        window.console.log('KEY: ' + key);
-        TogetherJSConfig_findRoom = key;
-        TogetherJS();
-      });
-    }
+applyIfCollaborator(function(isCollaborator) {
+  if(isCollaborator) {
+    getCollaboratorKey(function(key) {
+      TogetherJSConfig_findRoom = key;
+      TogetherJS();
+    });
   }
 });
 
