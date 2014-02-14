@@ -107,6 +107,7 @@ function updateTopControls(addHistory) {
     buttons.push(
         {id: 'collaborate', label: 'Collaborate'});
     applyIfCollaborator(updateCollaborateButtonVisibility);
+    
     if (m.data && m.data.file) {
       buttons.push(
         {id: 'save', title: 'Ctrl+S', label: 'Save',
@@ -169,9 +170,7 @@ function applyIfCollaborator(callback) {
         }
       }
     }
-    if (isCollaborator) {
-      callback(isCollaborator);
-    }
+    callback(isCollaborator);
   });
 }
 
