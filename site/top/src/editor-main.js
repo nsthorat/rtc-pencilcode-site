@@ -215,6 +215,14 @@ view.on('collaborate', function() {
 
   storage.saveFile(
       model.ownername, collab_filename, collabdata, true, model.passkey, false /* callback */);
+  
+  // Initialize TogetherJS.
+  TogetherJSConfig_on_ready = function () {
+    window.console.log("ready");
+    saveCollaborationKey();
+  };
+  TogetherJS();
+
   // Automatically update buttons instead of waiting for response from collaborators file.
   updateCollaborateButtonVisibility(true);
 });
@@ -1301,6 +1309,39 @@ function cookie(key, value, options) {
   return result;
 };
 
+function saveCollaborationKey() {
+  if (!pencilcode.owner) {
+    window.console.log("Error: no owner for collaboration");
+    return;
+  }
+  var together_url = TogetherJS.shareUrl();
+  window.console.log(together_url);
+  if (!together_url) {
+    window.console.log("Error: no share url for collaboration");
+    return;
+  }
+  var key = together_url.replace(/^.*#&togetherjs=/, '');
+  window.console.log("saving: " + model.ownername);
+  window.console.log( pencilcode.programName + ".collaborators.key");
+  window.console.log("key: " + key);
+  var key_filename = pencilcode.programName + ".collaborators.key";
+  var data = {
+    auth: true,
+    data: key,
+    file: key_filename,
+    mime: "text/plain",
+    mtime: 0
+  };
+  storage.saveFile(
+    model.ownername, key_filename,
+    data, false /* overwrite */, model.passkey, false /* backup only */,
+    function(status) {
+      if (status.error) {
+        view.flashNotification(status.error);
+      }
+    });
+}
+
 readNewUrl();
 
 var loggedInUser = cookie('login').split(":")[0];
@@ -1319,23 +1360,3 @@ return model;
 
 });
 
-function saveCollaborationKey() {
-  if (!pencilcode.owner) {
-    window.console.log("Error: no owner for collaboration");
-    return;
-  }
-  var together_url = TogetherJS.shareUrl()
-  if (!together_url) {
-    window.console.log("Error: no share url for collaboration");
-    return;
-  }
-  var key = url.replace(/^.*#&togetherjs=/, '');
-  storage.saveFile(
-    model.ownername, pencilcode.programName + ".collaborators.key",
-    key, false /* overwrite */, model.passkey, false /* backup only */,
-    function(status) {
-      if (status.error) {
-        view.flashNotification(status.error);
-      }
-    });
-}
