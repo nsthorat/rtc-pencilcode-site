@@ -47,12 +47,13 @@ var setCollaborationFrameworkUserName = function(name) {
 }
 TogetherJSConfig_on_ready = function() {
 	setCollaborationFrameworkUserName = function(name) {
-		console.log("Changing name to " + name);
+		var safeName = name || getRandomName();
+		console.log("Changing name to " + safeName);
 		var me = TogetherJS.require('peers').Self;
-	    me.update({name: name});
+	    me.update({name: safeName});
 	};
 	if (pendingName != null) {
-		TogetherJS_setUserName(pendingName);
+		setCollaborationFrameworkUserName(pendingName);
 	}
 };
 
