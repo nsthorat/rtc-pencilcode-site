@@ -187,6 +187,8 @@ function getCollaboratorKey(callback) {
 
 function updateCollaborateButtonVisibility(isCollaborator) {
   // Only show collaborate buttons for the owner of the file.
+  window.console.log(loggedInUser);
+  window.console.log(model.ownername);
   if (loggedInUser == model.ownername) {
     $("#collaborate").css("display", isCollaborator ? "none" : "inline-block");
     $("#add-collaborate").css("display", !isCollaborator ? "none" : "inline-block");
@@ -238,7 +240,7 @@ view.on('stop-collaborate', function() {
   var collab_filename = modelatpos('left').filename + ".collaborators";
   var collabdata = {
     auth: true,
-    data: "",
+    data: "\n",
     file: collab_filename,
     mime: "text/plain",
     mtime: 0
