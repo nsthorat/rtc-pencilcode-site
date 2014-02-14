@@ -7,6 +7,7 @@
 <meta name="viewport" content="initial-scale=1,width=device-width">
 <style>
 * {box-sizing:border-box;}
+#togetherjs-container { display: none;}
 </style>
 <script>
 // Fast fixup: framebust and url-based title.
@@ -48,7 +49,6 @@ var setCollaborationFrameworkUserName = function(name) {
 TogetherJSConfig_on_ready = function() {
 	setCollaborationFrameworkUserName = function(name) {
 		var safeName = name || getRandomName();
-		console.log("Changing name to " + safeName);
 		var me = TogetherJS.require('peers').Self;
 	    me.update({name: safeName});
 	};
