@@ -173,7 +173,19 @@ function applyIfCollaborator(callback) {
         }
       }
     }
-    callback(isCollaborator);
+    if (isCollaborator) {
+      callback(isCollaborator);
+    }
+  });
+}
+
+function getCollaboratorKey(callback) {
+  $.getJSON('/load/' + pencilcode.programName + '.collaborators.key', function(response) {
+    if (!response.data) {
+      return;
+    }
+    var key = response.data.trim();
+    callback(key);
   });
 }
 
@@ -209,6 +221,14 @@ view.on('collaborate', function() {
 
   storage.saveFile(
       model.ownername, collab_filename, collabdata, true, model.passkey, false /* callback */);
+  
+  // Initialize TogetherJS.
+  TogetherJSConfig_on_ready = function () {
+    window.console.log("ready");
+    saveCollaborationKey();
+  };
+  TogetherJS();
+
   // Automatically update buttons instead of waiting for response from collaborators file.
   updateCollaborateButtonVisibility(true);
 });
@@ -1315,18 +1335,45 @@ function saveCollaborationKey() {
     window.console.log("Error: no owner for collaboration");
     return;
   }
-  var together_url = TogetherJS.shareUrl()
+  var together_url = TogetherJS.shareUrl();
   if (!together_url) {
     window.console.log("Error: no share url for collaboration");
     return;
   }
-  var key = url.replace(/^.*#&togetherjs=/, '');
+  var key = together_url.replace(/^.*#&togetherjs=/, '');
+  var key_filename = pencilcode.programName + ".collaborators.key";
+  var data = {
+    auth: true,
+    data: key,
+    file: key_filename,
+    mime: "text/plain",
+    mtime: 0
+  };
   storage.saveFile(
-    model.ownername, pencilcode.programName + ".collaborators.key",
-    key, false /* overwrite */, model.passkey, false /* backup only */,
+    model.ownername, key_filename,
+    data, false /* overwrite */, model.passkey, false /* backup only */,
     function(status) {
       if (status.error) {
         view.flashNotification(status.error);
       }
     });
 }
+
+readNewUrl();
+
+var loggedInUser = cookie('login').split(":")[0];
+
+// TODO: Don't do this in javascript.
+applyIfCollaborator(function(isCollaborator) {
+  if(isCollaborator) {
+    getCollaboratorKey(function(key) {
+      TogetherJSConfig_findRoom = key;
+      TogetherJS();
+    });
+  }
+});
+
+return model;
+
+});
+
