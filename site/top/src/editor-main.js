@@ -100,6 +100,10 @@ function updateTopControls(addHistory) {
   if (!model.editmode) {
     buttons.push({id: 'editmode', label: 'Edit'});
   } else {
+    /*buttons.push(
+        {id: 'add-collaborate', label: 'Add Collaborators'});
+    buttons.push(
+        {id: 'stop-collaborate', label: 'Stop Collaborating'});*/
     buttons.push(
         {id: 'collaborate', label: 'Collaborate'});
     if (m.data && m.data.file) {
@@ -161,6 +165,24 @@ view.on('help', function() {
     (model.username ?
         '&emsp; <a id="setpass" href="#setpass">Change password.</a>' : '')
   );
+});
+
+view.on('collaborate', function() {
+  var collab_filename = modelatpos('left').filename + ".collaborators";
+  var collabdata = {
+    auth: true,
+    data: model.ownername,
+    file: collab_filename,
+    mime: "text/plain",
+    mtime: 0
+  };
+
+  storage.saveFile(
+      model.ownername, collab_filename, collabdata, true, model.passkey, false /* callback */);
+});
+
+view.on('add-collaborate', function() {
+  window.open(modelatpos('left').filename + '.collaborators');
 });
 
 view.on('tour', function() {
@@ -354,6 +376,7 @@ function saveAction(forceOverwrite) {
   // TODO: pick the right mime type here.
   var newdata = $.extend({},
       modelatpos('left').data, { data: runtext, mime: mimetext.mime });
+  window.console.log(newdata);
   // After a successful save, mark the file as clean and update mtime.
   function noteclean(mtime) {
     view.flashNotification('Saved.');
