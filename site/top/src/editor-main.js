@@ -1317,21 +1317,6 @@ function cookie(key, value, options) {
   return result;
 };
 
-readNewUrl();
-
-var loggedInUser = cookie('login') ? cookie('login').split(":")[0] : null;
-
-// TODO: Don't do this in javascript.
-checkIfCollaboratorAndCall(function(isCollaborator) {
-  if(isCollaborator) {
-    TogetherJS();
-  }
-});
-
-return model;
-
-});
-
 function saveCollaborationKey() {
   if (!pencilcode.owner) {
     window.console.log("Error: no owner for collaboration");
@@ -1360,3 +1345,19 @@ function saveCollaborationKey() {
       }
     });
 }
+
+readNewUrl();
+
+var loggedInUser = cookie('login') ? cookie('login').split(":")[0] : null;
+
+// TODO: Don't do this in javascript.
+checkIfCollaboratorAndCall(function(isCollaborator) {
+  if(isCollaborator) {
+    TogetherJS();
+  }
+});
+
+return model;
+
+});
+
