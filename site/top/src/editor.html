@@ -7,13 +7,15 @@
 <meta name="viewport" content="initial-scale=1,width=device-width">
 <style>
 * {box-sizing:border-box;}
+#togetherjs-container { display: none;}
 </style>
 <script>
 // Fast fixup: framebust and url-based title.
 if (top != self) { top.location.replace(self.location.href); }
 window.pencilcode = {
   domain: location.hostname.replace(/(?:(.*)\.)?([^.]*.{8})$/, '$2'),
-  owner: location.host.replace(/\.[^.]*.{8}$/, '')
+  owner: location.host.replace(/\.[^.]*.{8}$/, ''),
+  programName: location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')
 };
 document.write(
   '<link rel="stylesheet" type="text/css" href="//' +
@@ -34,10 +36,19 @@ var getRandomName = function() {
 	  "Mole", "Hawk", "Banana"
 	];
 	return firsts[Math.floor(Math.random() * firsts.length)] +
-	    " " + animals[Math.floor(Math.random() * animals.length)];
+	    " " + 
+	    String.fromCharCode(65 + Math.floor(Math.random() * 26)) +
+	    ". " +
+	    animals[Math.floor(Math.random() * animals.length)];
 };
 
-// TogetherJS config.
+/*
+ * The idea here is to allow the internals of editor-main.js to tell us when
+ * the user is authenticated, and therefore has a username. If TogetherJS has
+ * not yet loaded, we save the username, otherwise we set it right away. When
+ * TogetherJS loads, we check for the existence of a pending name, and set it
+ * as needed.
+ */
 TogetherJSConfig_getUserName = function() {
 	return pendingName || getRandomName();
 };
@@ -48,7 +59,6 @@ var setCollaborationFrameworkUserName = function(name) {
 TogetherJSConfig_on_ready = function() {
 	setCollaborationFrameworkUserName = function(name) {
 		var safeName = name || getRandomName();
-		console.log("Changing name to " + safeName);
 		var me = TogetherJS.require('peers').Self;
 	    me.update({name: safeName});
 	};
@@ -57,13 +67,12 @@ TogetherJSConfig_on_ready = function() {
 	}
 };
 
+// TogetherJS config.
 TogetherJSConfig_suppressInvite = true;
 TogetherJSConfig_dontShowClicks = true;
-TogetherJSConfig_autoStart = true;
-TogetherJSConfig_cloneClicks = ".triangle";
+TogetherJSConfig_cloneClicks = ".triangle,#run";
 </script>
 <script src="https://togetherjs.com/togetherjs-min.js"></script>
-</head>
 <body id="pencilcode">
 <div id="overflow">
 <div id="overlay"></div>
@@ -82,7 +91,7 @@ pencilcode.domain,
 '/folder_32.png',
 '" height="32" width="32"></a>',
 '<span id="filename" title="Edit to move or rename.">',
-htmlEscape(location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')),
+htmlEscape(pencilcode.programName),
 '</span>'].join(''));
 })();
 </script></nobr></td>
@@ -98,6 +107,7 @@ htmlEscape(location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')),
 </div><!-- end clip -->
 <script src="/lib/ace/ace.js"></script> <!-- local URL for same-origin -->
 <script data-main="/src/editor-main" src="/src/require.js"></script>
+</head>
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

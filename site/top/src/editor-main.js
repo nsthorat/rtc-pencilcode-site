@@ -303,7 +303,7 @@ view.on('login', function() {
         }
         state.update({cancel: true});
         cookie('login', model.username + ':' + model.passkey,
-            { expires: 1, path: '/' });
+            { expires: 1, path: '/', domain: window.pencilcode.domain });
         if (!specialowner()) {
           cookie('recent', window.location.href,
               { expires: 7, path: '/', domain: window.pencilcode.domain });
@@ -344,7 +344,7 @@ view.on('setpass', function() {
         setUsername(model.ownername);
         model.passkey = newpasskey;
         cookie('login', model.username + ':' + model.passkey,
-            { expires: 1, path: '/' });
+            { expires: 1, path: '/', domain: window.pencilcode.domain });
         if (!specialowner()) {
           cookie('recent', window.location.href,
               { expires: 7, path: '/', domain: window.pencilcode.domain });
@@ -611,7 +611,7 @@ function logInAndSave(filename, newdata, forceOverwrite, noteclean) {
           view.flashNotification(
               'Deleted ' + filename.replace(/^.*\//, '') + '.');
           cookie('login', model.username + ':' + model.passkey,
-              { expires: 1, path: '/' });
+              { expires: 1, path: '/', domain: window.pencilcode.domain });
           if (model.ownername) {
              cookie('recent', window.location.href,
                 { expires: 7, path: '/', domain: window.pencilcode.domain });
@@ -628,7 +628,7 @@ function logInAndSave(filename, newdata, forceOverwrite, noteclean) {
         } else {
           noteclean(m.mtime);
           cookie('login', model.username + ':' + model.passkey,
-              { expires: 1, path: '/' });
+              { expires: 1, path: '/', domain: window.pencilcode.domain });
           if (model.ownername) {
             cookie('recent', window.location.href,
                 { expires: 7, path: '/', domain: window.pencilcode.domain });
@@ -847,7 +847,7 @@ function logInAndMove(filename, newfilename, completeRename) {
           view.flashNotification(m.error);
         } else {
           cookie('login', model.username + ':' + model.passkey,
-              { expires: 1, path: '/' });
+              { expires: 1, path: '/', domain: window.pencilcode.domain });
           if (model.ownername) {
             cookie('recent', window.location.href,
                 { expires: 7, path: '/', domain: window.pencilcode.domain });
@@ -1246,6 +1246,22 @@ function cookie(key, value, options) {
 };
 
 readNewUrl();
+
+var loggedInUser = cookie('login').split(":")[0];
+
+// TODO: Don't do this in javascript.
+$.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
+  if (!response.data) {
+    return;
+  }
+  var collaborators = response.data.split("\n");
+  var isCollaborator = false;
+  for (var i = 0; i < collaborators.length; i++) {
+    if (collaborators[i] == loggedInUser) {
+      TogetherJS();
+    }
+  }
+});
 
 return model;
 
