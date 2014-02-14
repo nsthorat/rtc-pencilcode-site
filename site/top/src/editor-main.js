@@ -168,14 +168,12 @@ function checkIfCollaboratorAndCall(callback) {
     if (response.data) {
       var collaborators = response.data.split("\n");
       for (var i = 0; i < collaborators.length; i++) {
-        if (collaborators[i] == model.ownername) {
+        if (collaborators[i] == loggedInUser) {
           isCollaborator = true;
         }
       }
     }
-    if (isCollaborator) {
-      callback(isCollaborator);
-    }
+    callback(isCollaborator);
   });
 }
 
@@ -226,7 +224,6 @@ view.on('collaborate', function() {
   
   // Initialize TogetherJS.
   TogetherJSConfig_on_ready = function () {
-    window.console.log("ready");
     saveCollaborationKey();
   };
   TogetherJS();
@@ -1360,4 +1357,3 @@ checkIfCollaboratorAndCall(function(isCollaborator) {
 return model;
 
 });
-
