@@ -15,7 +15,7 @@ if (top != self) { top.location.replace(self.location.href); }
 window.pencilcode = {
   domain: location.hostname.replace(/(?:(.*)\.)?([^.]*.{8})$/, '$2'),
   owner: location.host.replace(/\.[^.]*.{8}$/, ''),
-  programName: location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '');
+  programName: location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')
 };
 document.write(
   '<link rel="stylesheet" type="text/css" href="//' +
