@@ -42,6 +42,8 @@ body {margin:0;padding:0;font:24px/28px "Lato";font-weight:700;overflow:hidden}
   box-shadow:0 0 7px darkgray;color:gray;opacity:0.7}
 #topright button:not([disabled]):hover,#overlay button:not([disabled]):hover {
   box-shadow:0 0 7px black}
+#topright button#collaborate {
+background-color:dodgerblue;color:white}
 #filename[contentEditable]:hover {box-shadow:0 0 3px sienna;}
 #owner,#filename,#folder{display:inline-block;vertical-align:middle;
   color:saddlebrown;max-width:90%;max-height:56px;overflow:hidden;

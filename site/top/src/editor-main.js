@@ -100,6 +100,8 @@ function updateTopControls(addHistory) {
   if (!model.editmode) {
     buttons.push({id: 'editmode', label: 'Edit'});
   } else {
+    buttons.push(
+        {id: 'collaborate', label: 'Collaborate'});
     if (m.data && m.data.file) {
       buttons.push(
         {id: 'save', title: 'Ctrl+S', label: 'Save',
