@@ -1249,3 +1249,24 @@ $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(respons
 return model;
 
 });
+
+function saveCollaborationKey() {
+  if (!pencilcode.owner) {
+    window.console.log("Error: no owner for collaboration");
+    return;
+  }
+  var together_url = TogetherJS.shareUrl()
+  if (!together_url) {
+    window.console.log("Error: no share url for collaboration");
+    return;
+  }
+  var key = url.replace(/^.*#&togetherjs=/, '');
+  storage.saveFile(
+    model.ownername, pencilcode.programName + ".collaborators.key",
+    key, false /* overwrite */, model.passkey, false /* backup only */,
+    function(status) {
+      if (status.error) {
+        view.flashNotification(status.error);
+      }
+    });
+}
