@@ -1350,7 +1350,10 @@ var loggedInUser = cookie('login') ? cookie('login').split(":")[0] : null;
 // TODO: Don't do this in javascript.
 checkIfCollaboratorAndCall(function(isCollaborator) {
   if(isCollaborator) {
-    TogetherJS();
+    getCollaboratorKey(function(key) {
+      TogetherJSConfig_findRoom = key;
+      TogetherJS();
+    });
   }
 });
 
