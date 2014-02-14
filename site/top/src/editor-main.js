@@ -1222,15 +1222,20 @@ function cookie(key, value, options) {
 
 readNewUrl();
 
+var loggedInUser = cookie('login').split(":")[0];
+
 // TODO: Don't do this in javascript.
 $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
+  if (!response.data) {
+    return;
+  }
   var collaborators = response.data.split("\n");
   var isCollaborator = false;
   for (var i = 0; i < collaborators.length; i++) {
-    if (collaborators[i] == window.pencilcode.owner) {
+    if (collaborators[i] == loggedInUser) {
+      TogetherJS();
     }
   }
-  window.console.log(response.data);
 });
 
 return model;
