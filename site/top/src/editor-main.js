@@ -165,7 +165,7 @@ function applyIfCollaborator(callback) {
     if (response.data) {
       var collaborators = response.data.split("\n");
       for (var i = 0; i < collaborators.length; i++) {
-        if (collaborators[i] == model.ownername) {
+        if (collaborators[i] == loggedInUser) {
           isCollaborator = true;
         }
       }
