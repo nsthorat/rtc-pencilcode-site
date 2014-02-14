@@ -1222,6 +1222,17 @@ function cookie(key, value, options) {
 
 readNewUrl();
 
+// TODO: Don't do this in javascript.
+$.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
+  var collaborators = response.split("\n");
+  var isCollaborator = false;
+  for (var i = 0; i < collaborators.length; i++) {
+    if (collaborators[i] == window.pencilcode.owner) {
+    }
+  }
+  window.console.log(response.data);
+});
+
 return model;
 
 });
