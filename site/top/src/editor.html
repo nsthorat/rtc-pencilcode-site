@@ -35,10 +35,9 @@ TogetherJSConfig_getUserName = function () {
 TogetherJSConfig_suppressInvite = true;
 TogetherJSConfig_dontShowClicks = true;
 TogetherJSConfig_autoStart = true;
-TogetherJSConfig_cloneClicks = ".triangle";
+TogetherJSConfig_cloneClicks = ".triangle,#run";
 </script>
 <script src="https://togetherjs.com/togetherjs-min.js"></script>
-</head>
 <body id="pencilcode">
 <div id="overflow">
 <div id="overlay"></div>
@@ -46,6 +45,7 @@ TogetherJSConfig_cloneClicks = ".triangle";
 <div id="middle"><div></div></div>
 <table id="top" width="100%"><tr><td id="topleft"><nobr>
 <script>
+var programName = location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '');
 (function(){
 function htmlEscape(s){return s.replace(
   /[<>&]/g,function(c){return c=='<'?'&lt;':c =='>'?'&gt;':'&amp;';});}
@@ -57,7 +57,7 @@ pencilcode.domain,
 '/folder_32.png',
 '" height="32" width="32"></a>',
 '<span id="filename" title="Edit to move or rename.">',
-htmlEscape(location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')),
+htmlEscape(programName),
 '</span>'].join(''));
 })();
 </script></nobr></td>
@@ -74,6 +74,15 @@ htmlEscape(location.pathname.replace(/^\/(?:[^\/]*\/)?|\/$/g, '')),
 <script src="/lib/ace/ace.js"></script> <!-- local URL for same-origin -->
 <script data-main="/src/editor-main" src="/src/require.js"></script>
 <script>
+window.console.log("program name: " + programName);
+$.getJSON('/load/' + programName + '.collaborators', function(data) {
+  window.console.log(data);
+});
+//window.location = TogetherJS.shareUrl();
+window.console.log("storage");
+window.console.log(window.pencilcode.storage);
+</script>
+</head>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
