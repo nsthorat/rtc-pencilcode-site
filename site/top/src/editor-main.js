@@ -237,9 +237,15 @@ $(window).on('beforeunload', function() {
   }
 });
 
+var setUsername = function(name) {
+  model.username = name;
+  if (setCollaborationFrameworkUserName) {
+    setCollaborationFrameworkUserName(name);
+  }
+}
 
 view.on('logout', function() {
-  model.username = null;
+  setUsername(null);
   model.passkey = null;
   cookie('login', '', { expires: -1, path: '/' });
   cookie('recent', '',
@@ -254,7 +260,7 @@ view.on('login', function() {
     username: model.ownername,
     validate: function(state) { return {}; },
     done: function(state) {
-      model.username = model.ownername;
+      setUsername(model.ownername);
       model.passkey = keyFromPassword(model.username, state.password);
       state.update({info: 'Logging in...', disable: true});
       storage.setPassKey(
@@ -262,12 +268,12 @@ view.on('login', function() {
       function(m) {
         if (m.needauth) {
           state.update({info: 'Wrong password.', disable: false});
-          model.username = null;
+          setUsername(null);
           model.passkey = null;
           return;
         } else if (m.error) {
           state.update({info: 'Could not log in.', disable: false});
-          model.username = null;
+          setUsername(null);
           model.passkey = null;
           return;
         }
@@ -311,7 +317,7 @@ view.on('setpass', function() {
           return;
         }
         state.update({cancel: true});
-        model.username = model.ownername;
+        setUsername(model.ownername);
         model.passkey = newpasskey;
         cookie('login', model.username + ':' + model.passkey,
             { expires: 1, path: '/' });
@@ -557,7 +563,7 @@ function logInAndSave(filename, newdata, forceOverwrite, noteclean) {
     switchuser: signUpAndSave,
     validate: function(state) { return {}; },
     done: function(state) {
-      model.username = model.ownername;
+      setUsername(model.ownername);
       model.passkey = keyFromPassword(model.username, state.password);
       state.update({info: 'Saving....', disable: true});
       storage.saveFile(
@@ -801,7 +807,7 @@ function logInAndMove(filename, newfilename, completeRename) {
     username: model.ownername,
     validate: function(state) { return {}; },
     done: function(state) {
-      model.username = model.ownername;
+      setUsername(model.ownername);
       model.passkey = keyFromPassword(model.username, state.password);
       state.update({info: 'Renaming....', disable: true});
       storage.moveFile(
@@ -897,7 +903,7 @@ function readNewUrl(undo) {
     cookie('login', login, { expires: 1, path: '/' });
   }
   if (login) {
-    model.username = login[1] || null;
+    setUsername(login[1] || null);
     model.passkey = login[2] || null;
   }
   // Clean up the hash if present, and absorb the new auth information.
