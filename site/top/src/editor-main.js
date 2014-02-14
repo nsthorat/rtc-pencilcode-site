@@ -87,6 +87,10 @@ function specialowner() {
           model.ownername === 'event');
 }
 
+function isowner() {
+  return loggedInUser == model.ownername;
+}
+
 function updateTopControls(addHistory) {
   var m = modelatpos('left');
   // Update visible URL and main title name.
@@ -106,10 +110,10 @@ function updateTopControls(addHistory) {
         {id: 'stop-collaborate', label: 'Stop Collaborating'});
     buttons.push(
         {id: 'collaborate', label: 'Collaborate'});
-    applyIfCollaborator(updateCollaborateButtonVisibility);
+    checkIfCollaboratorAndCall(updateCollaborateButtonVisibility);
     if (m.data && m.data.file) {
       buttons.push(
-        {id: 'save', title: 'Ctrl+S', label: 'Save',
+        {id: 'save', title: 'Ctrl+S', label: isowner() ? 'Save' : 'Save a Copy',
          disabled: !specialowner() && model.username &&
                    !view.isPaneEditorDirty(paneatpos('left')) });
     }
@@ -158,7 +162,7 @@ function updateTopControls(addHistory) {
   view.setPaneEditorReadOnly(paneatpos('back'), true);
 }
 
-function applyIfCollaborator(callback) {
+function checkIfCollaboratorAndCall(callback) {
   $.getJSON('/load/' + pencilcode.programName + '.collaborators', function(response) {
     var isCollaborator = false;
     if (response.data) {
@@ -169,9 +173,7 @@ function applyIfCollaborator(callback) {
         }
       }
     }
-    if (isCollaborator) {
-      callback(isCollaborator);
-    }
+    callback(isCollaborator);
   });
 }
 
@@ -211,7 +213,7 @@ view.on('collaborate', function() {
   var collab_filename = modelatpos('left').filename + ".collaborators";
   var collabdata = {
     auth: true,
-    data: model.ownername,
+    data: model.ownername + '\n',
     file: collab_filename,
     mime: "text/plain",
     mtime: 0
@@ -621,12 +623,12 @@ function signUpAndSave() {
             view.notePaneEditorCleanText(paneatpos('left'), runtext);
             storage.deleteBackup(mp.filename);
             state.update({cancel: true});
-            window.location.href =
-                'http://' + username + '.' + window.pencilcode.domain +
-                '/edit/' + mp.filename +
-                '#login=' + username + ':' + (key ? key : '');
           }
         });
+        window.open(
+          'http://' + username + '.' + window.pencilcode.domain +
+          '/edit/' + mp.filename +
+          '#login=' + username + ':' + (key ? key : ''));
       }
       if (key && shouldCreateAccount) {
         storage.setPassKey(username, key, null, function(m) {
@@ -1313,6 +1315,21 @@ function cookie(key, value, options) {
   return result;
 };
 
+readNewUrl();
+
+var loggedInUser = cookie('login') ? cookie('login').split(":")[0] : null;
+
+// TODO: Don't do this in javascript.
+checkIfCollaboratorAndCall(function(isCollaborator) {
+  if(isCollaborator) {
+    TogetherJS();
+  }
+});
+
+return model;
+
+});
+
 function saveCollaborationKey() {
   if (!pencilcode.owner) {
     window.console.log("Error: no owner for collaboration");
@@ -1341,22 +1358,3 @@ function saveCollaborationKey() {
       }
     });
 }
-
-readNewUrl();
-
-var loggedInUser = cookie('login').split(":")[0];
-
-// TODO: Don't do this in javascript.
-applyIfCollaborator(function(isCollaborator) {
-  if(isCollaborator) {
-    getCollaboratorKey(function(key) {
-      TogetherJSConfig_findRoom = key;
-      TogetherJS();
-    });
-  }
-});
-
-return model;
-
-});
-
