@@ -21,21 +21,46 @@ document.write(
   '<link rel="stylesheet" type="text/css" href="//' +
   pencilcode.domain + '/lib/tooltipster/css/tooltipster.css">');
 
-// TogetherJS config.
-TogetherJSConfig_getUserName = function () {
-	var animals = [
-		"Emu", "Fox", "Llama", "Bat",
-		"Cat", "Dog", "Ox", "Zebra",
-		"Antelope", "Rabbit", "Hare",
-		"Otter", "Ocelot", "Vole",
-		"Mole", "Hawk", "Banana"
+var getRandomName = function() {
+	var firsts = [
+	  "J. Random", "Happy", "Unusual", "Atypical",
+	  "Pat", "Bookish", "Soft"
 	];
-	return "J. Random " + animals[Math.floor(Math.random() * animals.length)];
+	var animals = [
+	  "Emu", "Fox", "Llama", "Bat",
+	  "Cat", "Dog", "Ox", "Zebra",
+	  "Antelope", "Rabbit", "Hare",
+	  "Otter", "Ocelot", "Vole",
+	  "Mole", "Hawk", "Banana"
+	];
+	return firsts[Math.floor(Math.random() * firsts.length)] +
+	    " " + animals[Math.floor(Math.random() * animals.length)];
 };
+
+// TogetherJS config.
+TogetherJSConfig_getUserName = function() {
+	return pendingName || getRandomName();
+};
+var pendingName = null;
+var setCollaborationFrameworkUserName = function(name) {
+	pendingName = name;
+}
+TogetherJSConfig_on_ready = function() {
+	setCollaborationFrameworkUserName = function(name) {
+		var safeName = name || getRandomName();
+		console.log("Changing name to " + safeName);
+		var me = TogetherJS.require('peers').Self;
+	    me.update({name: safeName});
+	};
+	if (pendingName != null) {
+		setCollaborationFrameworkUserName(pendingName);
+	}
+};
+
 TogetherJSConfig_suppressInvite = true;
 TogetherJSConfig_dontShowClicks = true;
 TogetherJSConfig_autoStart = true;
-TogetherJSConfig_cloneClicks = "button#run";
+TogetherJSConfig_cloneClicks = ".triangle";
 </script>
 <script src="https://togetherjs.com/togetherjs-min.js"></script>
 </head>
