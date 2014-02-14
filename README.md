@@ -17,12 +17,14 @@ which is very widely used.
 Prerequisites
 -------------
 
-First, you need git, which is easy.  On Linux,
-just `sudo apt-get install git` or `sudo yum install git-core`
+You need git, node.js (which is the `node` and `npm` binaries),
+and `grunt` (which is the build tool popular in the node.js community).
+
+On Linux:
+
+Just `sudo apt-get install git` or `sudo yum install git-core`
 if you don't have it.
 
-Second, you need node.js (which is the `node` and `npm` binaries)
-and `grunt` (which is the build tool popular in the node.js community).
 The Ubuntu and Debian packages for node.js are pretty old, so don't
 just apt-get install the packages.  Get and build the latest `node` and
 `npm` and `grunt` binaries as follows:
@@ -41,11 +43,15 @@ npm install -g grunt-cli
 The above drops all the built binaries into `~/local/bin` so you
 don't need root.
 
-On the Mac, git comes from Apple (just agree to their license),
+On Mac:
+
+git comes from Apple (just agree to their license),
 and node.js can be installed from http://nodejs.org/download/.
 You will need to `sudo npm install -g grunt-cli`.
 
-On Windows, git can be installed from here:
+On Windows:
+
+git can be installed from here:
 http://git-scm.com/download/win and node.js can be installed
 from here: http://nodejs.org/download/.  Windows development
 is untested, but if you try it, let me know.
