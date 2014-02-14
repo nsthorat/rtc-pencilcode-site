@@ -173,7 +173,9 @@ function checkIfCollaboratorAndCall(callback) {
         }
       }
     }
-    callback(isCollaborator);
+    if (isCollaborator) {
+      callback(isCollaborator);
+    }
   });
 }
 
