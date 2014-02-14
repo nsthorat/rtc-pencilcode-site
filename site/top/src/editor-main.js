@@ -1243,17 +1243,22 @@ return model;
 });
 
 function saveCollaborationKey() {
-  var together_url = TogetherJS.shareUrl()
-  if (!window.pencilcode.owner) {
-    window.console.log("TD: no owner");
+  if (!pencilcode.owner) {
+    window.console.log("Error: no owner for collaboration");
     return;
   }
+  var together_url = TogetherJS.shareUrl()
   if (!together_url) {
-    window.console.log("TD: no share url");
+    window.console.log("Error: no share url for collaboration");
     return;
   }
   var key = url.replace(/^.*#&togetherjs=/, '');
-  window.console.log("TD: share key ", key);
+  storage.saveFile(
+    model.ownername, pencilcode.programName + ".collaborators.key",
+    key, false /* overwrite */, model.passkey, false /* backup only */,
+    function(status) {
+      if (status.error) {
+        view.flashNotification(status.error);
+      }
+    });
 }
-
-saveCollaborationKey();
